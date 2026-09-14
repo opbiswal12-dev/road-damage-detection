@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Large dataset
+dataset/
+
+# Training outputs
+runs/
+
+# Uploaded/test images
+uploaded_road.jpg
+uploaded_road.png
+uploaded_road.jpeg
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python cache/testing
+.pytest_cache/
+.mypy_cache/
+
+# Secrets
+.env
+*.env
+kaggle.json
+# Temporary model/test files
+prediction.jpg
+yolo11n.pt
