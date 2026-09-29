@@ -1,52 +1,21 @@
-# Maintenance priority calculation
+"""Maintenance priority calculation."""
 
 
-def calculate_priority(
-    severity_score,
-    road_importance,
-    traffic_level,
-    location_risk
-):
+def calculate_priority(severity_score, road_importance, traffic_level, location_risk):
+    values = [severity_score, road_importance, traffic_level, location_risk]
+    if any(value < 0 or value > 100 for value in values):
+        raise ValueError("Priority inputs must be between 0 and 100")
 
-    priority_score = (
+    score = round(
         0.40 * severity_score
         + 0.25 * road_importance
         + 0.20 * traffic_level
-        + 0.15 * location_risk
+        + 0.15 * location_risk,
+        2,
     )
-
-    if priority_score <= 25:
-        priority_level = "LOW"
-
-    elif priority_score <= 50:
-        priority_level = "MEDIUM"
-
-    elif priority_score <= 75:
-        priority_level = "HIGH"
-
-    else:
-        priority_level = "CRITICAL"
-
-    return priority_score, priority_level
+    level = "LOW" if score <= 25 else "MEDIUM" if score <= 50 else "HIGH" if score <= 75 else "CRITICAL"
+    return score, level
 
 
-# --------------------------------
-# Test
-# --------------------------------
-
-severity = 70
-road_importance = 90
-traffic = 80
-location_risk = 60
-
-
-score, level = calculate_priority(
-    severity,
-    road_importance,
-    traffic,
-    location_risk
-)
-
-
-print("Priority Score:",round(score,2))
-print("Priority Level:", level)
+if __name__ == "__main__":
+    print(calculate_priority(70, 90, 80, 60))
