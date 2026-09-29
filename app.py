@@ -1,6 +1,7 @@
 import streamlit as st
 import sqlite3
 import pandas as pd
+import textwrap
 from ultralytics import YOLO
 
 from src.severity import calculate_severity
@@ -221,7 +222,7 @@ if page == "📊 Dashboard":
 
     with col1:
 
-        st.markdown(f"""
+        st.html(textwrap.dedent(f"""
         <div class="metric-card">
 
             <div class="metric-title">
@@ -237,12 +238,12 @@ if page == "📊 Dashboard":
             </div>
 
         </div>
-        """, unsafe_allow_html=True)
+        """))
 
 
     with col2:
 
-        st.markdown(f"""
+        st.html(textwrap.dedent(f"""
         <div class="metric-card">
 
             <div class="metric-title">
@@ -258,12 +259,12 @@ if page == "📊 Dashboard":
             </div>
 
         </div>
-        """, unsafe_allow_html=True)
+        """))
 
 
     with col3:
 
-        st.markdown(f"""
+        st.html(textwrap.dedent(f"""
         <div class="metric-card">
 
             <div class="metric-title">
@@ -279,12 +280,12 @@ if page == "📊 Dashboard":
             </div>
 
         </div>
-        """, unsafe_allow_html=True)
+        """))
 
 
     with col4:
 
-        st.markdown(f"""
+        st.html(textwrap.dedent(f"""
         <div class="metric-card">
 
             <div class="metric-title">
@@ -300,7 +301,7 @@ if page == "📊 Dashboard":
             </div>
 
         </div>
-        """, unsafe_allow_html=True)
+        """))
 
 
     # ========================================================
@@ -799,7 +800,7 @@ elif page == "🔍 Detect Damage":
                     # DISPLAY RESULT
                     # ========================================
 
-                    st.markdown(f"""
+                    st.html(textwrap.dedent(f"""
 
                     <div class="metric-card">
 
@@ -887,7 +888,7 @@ elif page == "🔍 Detect Damage":
 
                     </div>
 
-                    """, unsafe_allow_html=True)
+                    """))
 
 
                 st.success(
@@ -968,7 +969,12 @@ elif page == "📍 Locations":
             unsafe_allow_html=True
         )
 
-        st.map(location_data)
+        st.map(
+            location_data,
+            latitude="latitude",
+            longitude="longitude",
+            zoom=15
+        )
 
         # ----------------------------------------------------
         # Display location details
@@ -1217,6 +1223,10 @@ elif page == "🔧 Maintenance":
 # ANALYTICS
 # ============================================================
 
+# ============================================================
+# ANALYTICS
+# ============================================================
+
 elif page == "📈 Analytics":
 
     st.markdown(
@@ -1226,7 +1236,6 @@ elif page == "📈 Analytics":
         unsafe_allow_html=True
     )
 
-
     st.markdown(
         '<div class="subtitle">'
         'Analyze road damage patterns and maintenance requirements.'
@@ -1234,9 +1243,11 @@ elif page == "📈 Analytics":
         unsafe_allow_html=True
     )
 
+    # Get real records from database
+    records = get_damage_records()
 
+    # Create two columns for the charts
     col1, col2 = st.columns(2)
-
 
     # ========================================================
     # DAMAGE TYPES
@@ -1251,24 +1262,42 @@ elif page == "📈 Analytics":
             unsafe_allow_html=True
         )
 
+        damage_counts = {
+            "D00": 0,
+            "D10": 0,
+            "D20": 0,
+            "D40": 0
+        }
+
+        for record in records:
+
+            damage_type = record[0]
+
+            if damage_type in damage_counts:
+                damage_counts[damage_type] += 1
+
+        damage_names = {
+            "D00": "Longitudinal Crack",
+            "D10": "Transverse Crack",
+            "D20": "Alligator Crack",
+            "D40": "Pothole"
+        }
 
         damage_data = pd.DataFrame({
-
             "Damage Type": [
-                "Pothole",
-                "Alligator Crack",
-                "Longitudinal Crack",
-                "Transverse Crack"
+                damage_names["D00"],
+                damage_names["D10"],
+                damage_names["D20"],
+                damage_names["D40"]
             ],
 
             "Count": [
-                48,
-                31,
-                29,
-                20
+                damage_counts["D00"],
+                damage_counts["D10"],
+                damage_counts["D20"],
+                damage_counts["D40"]
             ]
         })
-
 
         st.bar_chart(
             damage_data.set_index("Damage Type")
@@ -1276,21 +1305,33 @@ elif page == "📈 Analytics":
 
 
     # ========================================================
-    # SEVERITY DISTRIBUTION
+    # SEVERITY
     # ========================================================
 
     with col2:
 
         st.markdown(
             '<div class="section-title">'
-            'Severity Distribution'
+            'Severity'
             '</div>',
             unsafe_allow_html=True
         )
 
+        severity_counts = {
+            "CRITICAL": 0,
+            "HIGH": 0,
+            "MEDIUM": 0,
+            "LOW": 0
+        }
+
+        for record in records:
+
+            severity_level = record[3]
+
+            if severity_level in severity_counts:
+                severity_counts[severity_level] += 1
 
         severity_data = pd.DataFrame({
-
             "Severity": [
                 "Critical",
                 "High",
@@ -1299,13 +1340,12 @@ elif page == "📈 Analytics":
             ],
 
             "Count": [
-                7,
-                42,
-                54,
-                25
+                severity_counts["CRITICAL"],
+                severity_counts["HIGH"],
+                severity_counts["MEDIUM"],
+                severity_counts["LOW"]
             ]
         })
-
 
         st.bar_chart(
             severity_data.set_index("Severity")
