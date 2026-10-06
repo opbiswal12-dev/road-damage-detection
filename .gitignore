@@ -2,39 +2,52 @@
 __pycache__/
 *.pyc
 *.pyo
+*.egg-info/
+*.egg
+dist/
+build/
+.Python
 
 # Virtual environment
 venv/
 .venv/
 env/
+ENV/
 
-# Large dataset
-dataset/
-
-# Training outputs
-runs/
-
-# Uploaded/test images
-uploaded_road.jpg
-uploaded_road.png
-uploaded_road.jpeg
-
-# IDE files
+# IDE
 .vscode/
 .idea/
-
-# OS files
+*.swp
+*.swo
+*~
 .DS_Store
-Thumbs.db
 
-# Python cache/testing
-.pytest_cache/
-.mypy_cache/
+# Project specific
+data/road_damage.db
+uploaded_road.*
+prediction.jpg
+yolo11n.pt
+runs/
+models/yolo11n.pt
 
-# Secrets
+# Dataset (large files)
+dataset/
+
+# Environment variables
 .env
 *.env
 kaggle.json
-# Temporary model/test files
-prediction.jpg
-yolo11n.pt
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Streamlit cache
+.streamlit/
+!.streamlit/config.toml
+
+# OS
+Thumbs.db
+.DS_Store
